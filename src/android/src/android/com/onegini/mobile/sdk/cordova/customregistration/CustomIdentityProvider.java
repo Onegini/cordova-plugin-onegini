@@ -19,7 +19,7 @@ package com.onegini.mobile.sdk.cordova.customregistration;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import android.support.annotation.StringDef;
+import androidx.annotation.StringDef;
 import com.onegini.mobile.sdk.android.handlers.action.OneginiCustomRegistrationAction;
 import com.onegini.mobile.sdk.android.model.OneginiCustomIdentityProvider;
 
