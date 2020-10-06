@@ -29,7 +29,7 @@ import java.util.List;
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.PluginResult;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import com.onegini.mobile.sdk.android.handlers.OneginiMobileAuthenticationHandler;
 import com.onegini.mobile.sdk.android.handlers.error.OneginiError;
 import com.onegini.mobile.sdk.android.handlers.error.OneginiMobileAuthenticationError;

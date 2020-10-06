@@ -4,7 +4,7 @@ package com.onegini.mobile.sdk.cordova.customregistration;
 import java.util.HashSet;
 import java.util.Set;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import com.onegini.mobile.sdk.cordova.util.ApplicationConfigurationParser;
 
 public class CustomIdentityProviderModel {
