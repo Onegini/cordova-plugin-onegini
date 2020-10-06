@@ -58,18 +58,6 @@ dependencies {
   }
 }
 
-afterEvaluate {
-  tasks.matching {
-    it.name.startsWith('dex')
-  }.each { dx ->
-    if (dx.additionalParameters == null) {
-      dx.additionalParameters = ['--multi-dex']
-    } else {
-      dx.additionalParameters += '--multi-dex'
-    }
-  }
-}
-
 android {
   defaultConfig {
     multiDexEnabled true
