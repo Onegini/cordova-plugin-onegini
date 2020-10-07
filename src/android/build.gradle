@@ -29,22 +29,22 @@ buildscript {
   }
 
   dependencies {
-    classpath 'com.android.tools.build:gradle:3.4.1'
+    classpath 'com.android.tools.build:gradle:3.6.3'
   }
 }
 
 allprojects {
-  sourceCompatibility = 1.6
-  targetCompatibility = 1.6
+  sourceCompatibility = 1.8
+  targetCompatibility = 1.8
 }
 
 android {
-  compileSdkVersion 28
-  buildToolsVersion '28.0.3'
+  compileSdkVersion 29
+  buildToolsVersion '29.0.3'
 
   defaultConfig {
     minSdkVersion 19
-    targetSdkVersion 28
+    targetSdkVersion 29
     versionCode 1
     versionName "1.0"
     multiDexEnabled true

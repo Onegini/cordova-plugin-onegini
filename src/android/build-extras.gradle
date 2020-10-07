@@ -53,20 +53,8 @@ allprojects {
 dependencies {
   // TODO Move to release version before plugin release
   // Onegini SDK
-  api('com.onegini.mobile.sdk.android:onegini-sdk:9.8.1@aar') {
+  api('com.onegini.mobile.sdk.android:onegini-sdk:10.2.1@aar') {
     transitive = true
-  }
-}
-
-afterEvaluate {
-  tasks.matching {
-    it.name.startsWith('dex')
-  }.each { dx ->
-    if (dx.additionalParameters == null) {
-      dx.additionalParameters = ['--multi-dex']
-    } else {
-      dx.additionalParameters += '--multi-dex'
-    }
   }
 }
 

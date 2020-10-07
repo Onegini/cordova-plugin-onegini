@@ -23,7 +23,7 @@ import java.io.IOException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Log;
 import okhttp3.Response;
 
