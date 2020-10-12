@@ -158,7 +158,7 @@ module.exports = (function (XMLHttpRequest, TextDecoder, CustomEvent) {
       },
       'body': {
         get: function () {
-          return new TextDecoder('utf-8').decode(this.rawBody);
+          return new TextDecoder('utf-8').decode(new DataView(this.rawBody));
         }
       },
       'json': {
