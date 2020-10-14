@@ -16,7 +16,7 @@
 -->
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android"
     id="cordova-plugin-onegini"
-    version="6.3.2">
+    version="7.0.1-SNAPSHOT">
   <name>OneginiCordovaPlugin</name>
   <description>Onegini Cordova Plugin</description>
 

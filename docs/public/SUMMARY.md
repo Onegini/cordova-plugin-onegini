@@ -49,6 +49,7 @@
             * [handleRequest](reference/mobileAuthentication/otp/handleRequest.md)
             * [OtpMobileAuthHandler](reference/mobileAuthentication/otp/OtpMobileAuthHandler.md)
 * [Release notes](release-notes/introduction.md)
+    * [7.x](release-notes/7.x.md)
     * [6.x](release-notes/6.x.md)
     * [5.x](release-notes/5.x.md)
     * [4.x](release-notes/4.x.md)

@@ -2,7 +2,7 @@
   "name": "cordova-plugin-onegini",
   "version": "0.0.1",
   "dependencies": {
-    "onegini-documentation-parent": "^2.0.2"
+    "onegini-documentation-parent": "^2.0.5"
   },
   "devDependencies": {},
   "scripts": {
