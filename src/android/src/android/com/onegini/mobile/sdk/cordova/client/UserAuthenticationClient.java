@@ -324,6 +324,17 @@ public class UserAuthenticationClient extends CordovaPlugin {
   }
 
   private void cancelFlow(final CallbackContext callbackContext) {
+    cordova.getThreadPool().execute(new Runnable() {
+      @Override
+      public void run() {
+        if (FingerprintAuthenticationRequestHandler.getInstance().getFingerprintCallback() != null) {
+          FingerprintAuthenticationRequestHandler.getInstance().getFingerprintCallback().denyAuthenticationRequest();
+        } else if (PinAuthenticationRequestHandler.getInstance().getPinCallback() != null) {
+          PinAuthenticationRequestHandler.getInstance().getPinCallback().denyAuthenticationRequest();
+        }
+      }
+    });
+
     callbackContext.sendPluginResult(new PluginResultBuilder()
         .withPluginError(ERROR_DESCRIPTION_OPERATION_CANCELED, ERROR_CODE_OPERATION_CANCELED)
         .build());
