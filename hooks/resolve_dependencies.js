@@ -29,6 +29,7 @@ const extractedConfigPlugin = 'cordova-plugin-onegini-extracted-config';
 const envVariables = {
   artifactoryUser: 'ARTIFACTORY_USER',
   artifactoryPassword: 'ARTIFACTORY_PASSWORD',
+  stripSimulatorArchitecture: 'ONEGINI_STRIP_SIMULATOR_ARCHITECTURE',
   sdkDownloadPath: 'ONEGINI_SDK_DOWNLOAD_PATH'
 };
 
@@ -40,7 +41,7 @@ const libOneginiSdkIos = `${baseArtifactoryUrl}/OneginiSDKiOS-${sdkVersion}.tar.
 const libName = libOneginiSdkIos.substring(libOneginiSdkIos.lastIndexOf('/') + 1);
 
 const iosSdkPathCordova = 'src/ios/OneginiSDKiOS';
-const iosSdkLibPathCordova = path.join(iosSdkPathCordova, 'OneginiSDKiOS.framework');
+const iosSdkLibPathCordova = path.join(iosSdkPathCordova, 'OneginiSDKiOS.framework/OneginiSDKiOS');
 const iosSdkHeadersPathCordova = path.join(iosSdkPathCordova, 'Headers');
 const cryptoLibPathCordova = path.join(iosSdkPathCordova, 'OneginiCrypto.framework');
 
@@ -66,6 +67,7 @@ module.exports = function (context) {
     .then(result => downloadFile(artifactoryCredentials, result, libOneginiSdkIos))
     .then(() => checkDownloadedFileIntegrity(artifactoryCredentials, libOneginiSdkIos))
     .then(() => unzipSDK(context))
+    .then(() => stripSimulatorArch(context))
     .then(() => writeToStdOut('Success!\n'));
 };
 
@@ -251,6 +253,28 @@ function unzipSDK(context) {
 
     debug('Unzipping SDK to ' + newDir);
     execSync('tar -xf' + sdkDownloadPath + '/' + libName + ' -C ' + newDir);
+    resolve();
+  });
+}
+
+function stripSimulatorArch(context) {
+  return new Promise((resolve) => {
+    writeToStdOut('.');
+
+    const shouldStrip = process.env[envVariables.stripSimulatorArchitecture];
+    if (shouldStrip !== "true") {
+      debug('ONEGINI_STRIP_SIMULATOR_ARCHITECTURE is not set. Skipping stripping simulator architecture.');
+      resolve();
+      return;
+    }
+
+    const pluginDir = context.opts.plugin.pluginInfo.dir;
+    const sdkLibPath = path.join(pluginDir, iosSdkLibPathCordova);
+
+    debug("Stripping simulator architecture from: " + sdkLibPath);
+    execSync('lipo -remove x86_64 ' + sdkLibPath + ' -o ' + sdkLibPath);
+    execSync('lipo -remove i386 ' + sdkLibPath + ' -o ' + sdkLibPath);
+    debug("Successfully stripped simulator architecture.");
     resolve();
   });
 }
