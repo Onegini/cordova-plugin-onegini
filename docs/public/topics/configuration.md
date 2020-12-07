@@ -77,11 +77,17 @@ This hook is only triggered for iOS platforms since the Android the SDK is downl
 
 The resolve dependencies hook can be customized using the following environment variables:
 
-| Name                            | Default value                                            | Description
-|---------------------------------|----------------------------------------------------------|---------------------------------------------------------------------------------------------------------
-| `ONEGINI_SDK_DOWNLOAD_PATH`     | `<project_root>/plugins/cordova-plugin-onegini/ios-sdk`  | The iOS SDK is quite big and if you want to prevent downloading it every time you can specify a different location that is not cleaned when you remove or add the plugin to your Cordova project. The hook will check whether the SDK is already downloaded before downloading it again.
+| Name                                   | Default value                                            | Description
+|----------------------------------------|----------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+| `ONEGINI_SDK_DOWNLOAD_PATH`            | `<project_root>/plugins/cordova-plugin-onegini/ios-sdk`  | The iOS SDK is quite big and if you want to prevent downloading it every time you can specify a different location that is not cleaned when you remove or add the plugin to your Cordova project. The hook will check whether the SDK is already downloaded before downloading it again.
+| `ONEGINI_STRIP_SIMULATOR_ARCHITECTURE` | false                                                    | When submitting an app to the App Store, Apple does not allow simulator (x86_64 and i386) architectures to be present in the iOS SDK. When this variable is set to true, SDK will be stripped of the simulator architectures which allows the app to be submitted to the App Store.
 
 For example, to change the location of the SDK download path you can set:
 ```bash
 export ONEGINI_SDK_DOWNLOAD_PATH=/opt/onegini/sdk
+```
+
+For example, to strip simulator architectures you can set:
+```bash
+export ONEGINI_STRIP_SIMULATOR_ARCHITECTURE=true
 ```
