@@ -334,10 +334,6 @@ public class UserAuthenticationClient extends CordovaPlugin {
         }
       }
     });
-
-    callbackContext.sendPluginResult(new PluginResultBuilder()
-        .withPluginError(ERROR_DESCRIPTION_OPERATION_CANCELED, ERROR_CODE_OPERATION_CANCELED)
-        .build());
   }
 
   private OneginiClient getOneginiClient() {
