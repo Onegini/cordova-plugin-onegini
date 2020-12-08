@@ -29,7 +29,7 @@ const extractedConfigPlugin = 'cordova-plugin-onegini-extracted-config';
 const envVariables = {
   artifactoryUser: 'ARTIFACTORY_USER',
   artifactoryPassword: 'ARTIFACTORY_PASSWORD',
-  stripSimulatorArchitecture: 'ONEGINI_STRIP_SIMULATOR_ARCHITECTURE',
+  stripSimulatorArchitectures: 'ONEGINI_STRIP_SIMULATOR_ARCHITECTURES',
   sdkDownloadPath: 'ONEGINI_SDK_DOWNLOAD_PATH'
 };
 
@@ -67,7 +67,7 @@ module.exports = function (context) {
     .then(result => downloadFile(artifactoryCredentials, result, libOneginiSdkIos))
     .then(() => checkDownloadedFileIntegrity(artifactoryCredentials, libOneginiSdkIos))
     .then(() => unzipSDK(context))
-    .then(() => stripSimulatorArch(context))
+    .then(() => stripSimulatorArchitectures(context))
     .then(() => writeToStdOut('Success!\n'));
 };
 
@@ -257,13 +257,13 @@ function unzipSDK(context) {
   });
 }
 
-function stripSimulatorArch(context) {
+function stripSimulatorArchitectures(context) {
   return new Promise((resolve) => {
     writeToStdOut('.');
 
-    const shouldStrip = process.env[envVariables.stripSimulatorArchitecture];
-    if (shouldStrip !== "true") {
-      debug('ONEGINI_STRIP_SIMULATOR_ARCHITECTURE is not set. Skipping stripping simulator architecture.');
+    const shouldStrip = getStripSimulatorArchitectures(context);
+    if (shouldStrip !== true) {
+      debug('Skipping stripping simulator architectures.');
       resolve();
       return;
     }
@@ -271,12 +271,47 @@ function stripSimulatorArch(context) {
     const pluginDir = context.opts.plugin.pluginInfo.dir;
     const sdkLibPath = path.join(pluginDir, iosSdkLibPathCordova);
 
-    debug("Stripping simulator architecture from: " + sdkLibPath);
+    debug("Stripping simulator architectures from: " + sdkLibPath);
     execSync('lipo -remove x86_64 ' + sdkLibPath + ' -o ' + sdkLibPath);
     execSync('lipo -remove i386 ' + sdkLibPath + ' -o ' + sdkLibPath);
-    debug("Successfully stripped simulator architecture.");
+    debug("Successfully stripped simulator architectures.");
     resolve();
   });
+}
+
+function getStripSimulatorArchitectures(context) {
+  const shouldStrip = process.env[envVariables.stripSimulatorArchitectures] === 'true';
+  if (shouldStrip) {
+    return shouldStrip
+  } else {
+    return getStripSimulatorArchitecturesFromProperties(context)
+  }
+}
+
+function getStripSimulatorArchitecturesFromProperties(context) {
+  const filePath = `${context.opts.projectRoot}/plugins/${extractedConfigPlugin}/plugin.properties`;
+  const hasExtractedConfig = hasExtractedConfigFiles(context);
+  if (hasExtractedConfig && fs.existsSync(filePath)) {
+    debug('Reading plugin.properties file');
+    var content = fs.readFileSync(filePath, 'utf8');
+    return parseStripSimulatorArchitectures(content);
+  }
+  return false;
+}
+
+function parseStripSimulatorArchitectures(fileContent) {
+  var shouldStrip = false;
+  ('' + fileContent).split(/[\r\n]+/)
+    .map((x) => x.trim())
+    .filter((x) => Boolean(x))
+    .forEach(function(item, index) {
+      const result = item.match(/stripSimulatorArchitectures=(.*)/i)
+      if (result.length == 2) {
+        shouldStrip = (result[1] === 'true');
+        return;
+      }
+    })
+  return shouldStrip;
 }
 
 function getArtifactoryCredentials(context) {
