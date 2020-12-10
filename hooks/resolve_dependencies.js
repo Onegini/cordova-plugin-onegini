@@ -306,7 +306,7 @@ function parseStripSimulatorArchitectures(fileContent) {
     .filter((x) => Boolean(x))
     .forEach(function(item, index) {
       const result = item.match(/stripSimulatorArchitectures=(.*)/i)
-      if (result.length == 2) {
+      if (result && result.length == 2) {
         shouldStrip = (result[1] === 'true');
         return;
       }
