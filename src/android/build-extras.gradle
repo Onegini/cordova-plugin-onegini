@@ -53,14 +53,14 @@ allprojects {
 dependencies {
   // TODO Move to release version before plugin release
   // Onegini SDK
-  api('com.onegini.mobile.sdk.android:onegini-sdk:10.2.1@aar') {
+  api('com.onegini.mobile.sdk.android:onegini-sdk:10.2.2@aar') {
     transitive = true
   }
 }
 
 android {
   defaultConfig {
-    multiDexEnabled true
+    multiDexEnabled tru2
   }
 }
 
