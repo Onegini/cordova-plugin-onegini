@@ -21,7 +21,7 @@ const crypto = require('crypto');
 const url = require('url');
 const https = require('https');
 const execSync = require('child_process').execSync;
-const debug = require('debug')('resolve_dependencies');
+const debug = console.log;
 
 const pluginId = 'cordova-plugin-onegini';
 const extractedConfigPlugin = 'cordova-plugin-onegini-extracted-config';
