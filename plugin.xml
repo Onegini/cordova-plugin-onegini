@@ -20,7 +20,8 @@
   <name>OneginiCordovaPlugin</name>
   <description>Onegini Cordova Plugin</description>
 
-  <hook type="before_plugin_install" src="hooks/resolve_dependencies.js"/>
+  <hook type="before_plugin_install" src="hooks/01_resolve_npm_dependencies.js"/>
+  <hook type="before_plugin_install" src="hooks/02_resolve_dependencies.js"/>
   <hook type="after_plugin_install" src="hooks/configure_sdk.js"/>
 
   <!--

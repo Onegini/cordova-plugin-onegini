@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+ console.log("Running hook to install SDK requirements for cordova-plugin-onegini");
+
 const fs = require('fs');
 const path = require('path');
 const process = require('process');
@@ -21,7 +23,7 @@ const crypto = require('crypto');
 const url = require('url');
 const https = require('https');
 const execSync = require('child_process').execSync;
-const debug = console.log;
+const debug = require('debug')('resolve_dependencies');
 
 const pluginId = 'cordova-plugin-onegini';
 const extractedConfigPlugin = 'cordova-plugin-onegini-extracted-config';
