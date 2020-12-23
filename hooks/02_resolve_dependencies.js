@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+console.log("Running hook to install SDK requirements for cordova-plugin-onegini");
 
 const fs = require('fs');
 const path = require('path');
@@ -46,6 +47,7 @@ const iosSdkHeadersPathCordova = path.join(iosSdkPathCordova, 'Headers');
 const cryptoLibPathCordova = path.join(iosSdkPathCordova, 'OneginiCrypto.framework');
 
 let sdkDownloadPath;
+
 
 module.exports = function (context) {
   const platform = context.opts.plugin.platform;

@@ -49,5 +49,7 @@
     "webpack": "^4.41.2",
     "webpack-cli": "^3.3.10"
   },
-  "dependencies": {}
+  "dependencies": {
+    "debug": "^4.3.1"
+  }
 }
