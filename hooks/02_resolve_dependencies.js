@@ -22,7 +22,6 @@ const crypto = require('crypto');
 const url = require('url');
 const https = require('https');
 const execSync = require('child_process').execSync;
-const debug = require('debug')('resolve_dependencies');
 
 const pluginId = 'cordova-plugin-onegini';
 const extractedConfigPlugin = 'cordova-plugin-onegini-extracted-config';
@@ -93,11 +92,11 @@ function checkSdkLibExistsOnFs() {
     writeToStdOut('.');
     const libFilePath = path.join(sdkDownloadPath, libName);
     if (fs.existsSync(libFilePath)) {
-      debug('SDK lib is already downloaded');
+      log('SDK lib is already downloaded');
       resolve(true);
     }
     else {
-      debug('SDK lib is not downloaded yet');
+      log('SDK lib is not downloaded yet');
       resolve(false);
     }
   });
@@ -105,7 +104,7 @@ function checkSdkLibExistsOnFs() {
 
 function calculateSha256(filepath) {
   return new Promise(resolve => {
-    debug(`Generating sha256 from: ${filepath}`);
+    log(`Generating sha256 from: ${filepath}`);
     const shasum = crypto.createHash('sha256');
 
     let readStream = fs.createReadStream(filepath);
@@ -114,7 +113,7 @@ function calculateSha256(filepath) {
     });
     readStream.on('end', () => {
       let hash = shasum.digest('hex');
-      debug(`hashing done: ${hash}`);
+      log(`hashing done: ${hash}`);
       resolve(hash);
     })
   });
@@ -135,7 +134,7 @@ function downloadFile(artifactoryCredentials, fileExists, fileUrl) {
       return;
     }
 
-    debug(`Downloading: ${filename}`);
+    log(`Downloading: ${filename}`);
     const auth = Buffer.from(`${artifactoryCredentials.artifactoryUser}:${artifactoryCredentials.artifactoryPassword}`).toString();
     const filePath = path.join(sdkDownloadPath, filename);
     const file = fs.createWriteStream(filePath);
@@ -150,7 +149,7 @@ function downloadFile(artifactoryCredentials, fileExists, fileUrl) {
         response.pipe(file);
         file.on('finish', function () {
           file.close();
-          debug(`File downloaded: ${filename}`);
+          log(`File downloaded: ${filename}`);
           resolve();
         });
       }
@@ -185,12 +184,12 @@ function checkDownloadedFileIntegrity(artifactoryCredentials, fileUrl) {
       .then(() => calculateSha256(downloadedFilePath))
       .then(calculatedHash => {
         const downloadedHash = fs.readFileSync(downloadedSha256FilePath).toString();
-        debug(`Comparing hashes:`);
-        debug(`downloaded hash: ${downloadedHash}`);
-        debug(`calculated hash: ${calculatedHash}`);
+        log(`Comparing hashes:`);
+        log(`downloaded hash: ${downloadedHash}`);
+        log(`calculated hash: ${calculatedHash}`);
 
         if (downloadedHash === calculatedHash) {
-          debug('Hashes match!');
+          log('Hashes match!');
           resolve();
         }
         else {
@@ -210,12 +209,12 @@ function prepareSdkDirectories(context) {
   const headersDir = path.join(pluginDir, iosSdkHeadersPathCordova);
 
   if (!fs.existsSync(sdkDir)) {
-    debug(`Create SDK directory: ${sdkDir}`);
+    log(`Create SDK directory: ${sdkDir}`);
     fs.mkdirSync(sdkDir);
   }
 
   if (!fs.existsSync(sdkDownloadPath)) {
-    debug(`Create SDK download : ${sdkDownloadPath}`);
+    log(`Create SDK download : ${sdkDownloadPath}`);
     fs.mkdirSync(sdkDownloadPath);
   }
   var directoriesToClean = [sdkDir];
@@ -253,7 +252,7 @@ function unzipSDK(context) {
     const pluginDir = context.opts.plugin.pluginInfo.dir;
     const newDir = path.join(pluginDir, iosSdkPathCordova);
 
-    debug('Unzipping SDK to ' + newDir);
+    log('Unzipping SDK to ' + newDir);
     execSync('tar -xf' + sdkDownloadPath + '/' + libName + ' -C ' + newDir);
     resolve();
   });
@@ -265,7 +264,7 @@ function stripSimulatorArchitectures(context) {
 
     const shouldStrip = getStripSimulatorArchitectures(context);
     if (shouldStrip !== true) {
-      debug('Skipping stripping simulator architectures.');
+      log('Skipping stripping simulator architectures.');
       resolve();
       return;
     }
@@ -273,10 +272,10 @@ function stripSimulatorArchitectures(context) {
     const pluginDir = context.opts.plugin.pluginInfo.dir;
     const sdkLibPath = path.join(pluginDir, iosSdkLibPathCordova);
 
-    debug("Stripping simulator architectures from: " + sdkLibPath);
+    log("Stripping simulator architectures from: " + sdkLibPath);
     execSync('lipo -remove x86_64 ' + sdkLibPath + ' -o ' + sdkLibPath);
     execSync('lipo -remove i386 ' + sdkLibPath + ' -o ' + sdkLibPath);
-    debug("Successfully stripped simulator architectures.");
+    log("Successfully stripped simulator architectures.");
     resolve();
   });
 }
@@ -294,7 +293,7 @@ function getStripSimulatorArchitecturesFromProperties(context) {
   const filePath = `${context.opts.projectRoot}/plugins/${extractedConfigPlugin}/plugin.properties`;
   const hasExtractedConfig = hasExtractedConfigFiles(context);
   if (hasExtractedConfig && fs.existsSync(filePath)) {
-    debug('Reading plugin.properties file');
+    log('Reading plugin.properties file');
     var content = fs.readFileSync(filePath, 'utf8');
     return parseStripSimulatorArchitectures(content);
   }
@@ -342,7 +341,7 @@ function getArtifactoryCredentialsFromEnv() {
   var password = process.env[envVariables.artifactoryPassword];
 
   if (username && password) {
-    debug('Artifactory credentials found in env!');
+    log('Artifactory credentials found in env!');
     return {artifactoryUser: username, artifactoryPassword: password};
   }
   return new Object();
@@ -352,7 +351,7 @@ function getArtifactoryCredentialsFromGradleProperties(context) {
   const filePath = `${context.opts.projectRoot}/plugins/${extractedConfigPlugin}/artifactory.properties`;
   const hasExtractedConfig = hasExtractedConfigFiles(context);
   if (hasExtractedConfig && fs.existsSync(filePath)) {
-    debug('Reading artifactory.properties file');
+    log('Reading artifactory.properties file');
     var content = fs.readFileSync(filePath, 'utf8');
     return parseArtifactoryCredentials(content);
   }
