@@ -43,7 +43,7 @@ const libName = libOneginiSdkIos.substring(libOneginiSdkIos.lastIndexOf('/') + 1
 const iosSdkPathCordova = 'src/ios/OneginiSDKiOS';
 const iosSdkLibPathCordova = path.join(iosSdkPathCordova, 'OneginiSDKiOS.framework/OneginiSDKiOS');
 const iosSdkHeadersPathCordova = path.join(iosSdkPathCordova, 'Headers');
-const cryptoLibPathCordova = path.join(iosSdkPathCordova, 'OneginiCrypto.framework');
+const cryptoLibPathCordova = path.join(iosSdkPathCordova, 'OneginiCrypto.framework/OneginiCrypto');
 
 let sdkDownloadPath;
 
@@ -271,10 +271,17 @@ function stripSimulatorArchitectures(context) {
 
     const pluginDir = context.opts.plugin.pluginInfo.dir;
     const sdkLibPath = path.join(pluginDir, iosSdkLibPathCordova);
+    const cryptoLibPath = path.join(pluginDir, cryptoLibPathCordova);
 
     log("Stripping simulator architectures from: " + sdkLibPath);
     execSync('lipo -remove x86_64 ' + sdkLibPath + ' -o ' + sdkLibPath);
     execSync('lipo -remove i386 ' + sdkLibPath + ' -o ' + sdkLibPath);
+    log(execSync('lipo -info ' + sdkLibPath));
+
+    log("Stripping simulator architectures from: " + cryptoLibPath);
+    execSync('lipo -remove x86_64 ' + cryptoLibPath + ' -o ' + cryptoLibPath);
+    execSync('lipo -remove i386 ' + cryptoLibPath + ' -o ' + cryptoLibPath);
+    log(execSync('lipo -info ' + cryptoLibPath));
     log("Successfully stripped simulator architectures.");
     resolve();
   });
