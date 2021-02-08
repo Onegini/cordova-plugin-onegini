@@ -28,11 +28,10 @@ const extractedConfigPlugin = 'cordova-plugin-onegini-extracted-config';
 const envVariables = {
   artifactoryUser: 'ARTIFACTORY_USER',
   artifactoryPassword: 'ARTIFACTORY_PASSWORD',
-  stripSimulatorArchitectures: 'ONEGINI_STRIP_SIMULATOR_ARCHITECTURES',
   sdkDownloadPath: 'ONEGINI_SDK_DOWNLOAD_PATH'
 };
 
-const sdkVersion = '9.6.0';
+const sdkVersion = '9.7.0';
 
 const baseArtifactoryUrl = `https://repo.onegini.com/artifactory/onegini-sdk/com/onegini/mobile/sdk/ios/libOneginiSDKiOS/${sdkVersion}`;
 const libOneginiSdkIos = `${baseArtifactoryUrl}/OneginiSDKiOS-${sdkVersion}.tar.gz`;
@@ -40,9 +39,7 @@ const libOneginiSdkIos = `${baseArtifactoryUrl}/OneginiSDKiOS-${sdkVersion}.tar.
 const libName = libOneginiSdkIos.substring(libOneginiSdkIos.lastIndexOf('/') + 1);
 
 const iosSdkPathCordova = 'src/ios/OneginiSDKiOS';
-const iosSdkLibPathCordova = path.join(iosSdkPathCordova, 'OneginiSDKiOS.framework/OneginiSDKiOS');
 const iosSdkHeadersPathCordova = path.join(iosSdkPathCordova, 'Headers');
-const cryptoLibPathCordova = path.join(iosSdkPathCordova, 'OneginiCrypto.framework/OneginiCrypto');
 
 let sdkDownloadPath;
 
@@ -66,7 +63,6 @@ module.exports = function (context) {
     .then(result => downloadFile(artifactoryCredentials, result, libOneginiSdkIos))
     .then(() => checkDownloadedFileIntegrity(artifactoryCredentials, libOneginiSdkIos))
     .then(() => unzipSDK(context))
-    .then(() => stripSimulatorArchitectures(context))
     .then(() => writeToStdOut('Success!\n'));
 };
 
@@ -231,7 +227,7 @@ function deleteFilesFromDirs(directories) {
       }
 
       for (const file of files) {
-        if (file.endsWith('.a') || file.endsWith('.h') || file.endsWith('.framework')) {
+        if (file.endsWith('.a') || file.endsWith('.h') || file.endsWith('.framework') || file.endsWith('.xcframework')) {
           fs.unlink(path.join(dir, file), err => {
             if (err) {
               console.error(err);
@@ -254,71 +250,6 @@ function unzipSDK(context) {
     execSync('tar -xf' + sdkDownloadPath + '/' + libName + ' -C ' + newDir);
     resolve();
   });
-}
-
-function stripSimulatorArchitectures(context) {
-  return new Promise((resolve) => {
-    writeToStdOut('.');
-
-    const shouldStrip = getStripSimulatorArchitectures(context);
-    if (shouldStrip !== true) {
-      console.log('Skipping stripping simulator architectures.');
-      resolve();
-      return;
-    }
-
-    const pluginDir = context.opts.plugin.pluginInfo.dir;
-    const sdkLibPath = path.join(pluginDir, iosSdkLibPathCordova);
-    const cryptoLibPath = path.join(pluginDir, cryptoLibPathCordova);
-    
-
-    log("Stripping simulator architectures from: " + sdkLibPath);
-    execSync('lipo -remove x86_64 ' + sdkLibPath + ' -o ' + sdkLibPath);
-    execSync('lipo -remove i386 ' + sdkLibPath + ' -o ' + sdkLibPath);
-    log(execSync('lipo -info ' + sdkLibPath));
-
-    log("Stripping simulator architectures from: " + cryptoLibPath);
-    execSync('lipo -remove x86_64 ' + cryptoLibPath + ' -o ' + cryptoLibPath);
-    execSync('lipo -remove i386 ' + cryptoLibPath + ' -o ' + cryptoLibPath);
-    log(execSync('lipo -info ' + cryptoLibPath));
-    log("Successfully stripped simulator architectures.");
-    resolve();
-  });
-}
-
-function getStripSimulatorArchitectures(context) {
-  const shouldStrip = process.env[envVariables.stripSimulatorArchitectures] === 'true';
-  if (shouldStrip) {
-    return shouldStrip
-  } else {
-    return getStripSimulatorArchitecturesFromProperties(context)
-  }
-}
-
-function getStripSimulatorArchitecturesFromProperties(context) {
-  const filePath = `${context.opts.projectRoot}/plugins/${extractedConfigPlugin}/plugin.properties`;
-  const hasExtractedConfig = hasExtractedConfigFiles(context);
-  if (hasExtractedConfig && fs.existsSync(filePath)) {
-    console.log('Reading plugin.properties file');
-    var content = fs.readFileSync(filePath, 'utf8');
-    return parseStripSimulatorArchitectures(content);
-  }
-  return false;
-}
-
-function parseStripSimulatorArchitectures(fileContent) {
-  var shouldStrip = false;
-  ('' + fileContent).split(/[\r\n]+/)
-    .map((x) => x.trim())
-    .filter((x) => Boolean(x))
-    .forEach(function(item, index) {
-      const result = item.match(/stripSimulatorArchitectures=(.*)/i)
-      if (result && result.length == 2) {
-        shouldStrip = (result[1] === 'true');
-        return;
-      }
-    })
-  return shouldStrip;
 }
 
 function getArtifactoryCredentials(context) {

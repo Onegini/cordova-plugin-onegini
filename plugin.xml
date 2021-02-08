@@ -155,8 +155,8 @@
     <framework src="WebKit.framework" weak="true"/>
 
     <!-- SDK binary -->
-    <framework src="src/ios/OneginiSDKiOS/OneginiSDKiOS.framework" custom="true" embed="true"/>
-    <framework src="src/ios/OneginiSDKiOS/OneginiCrypto.framework" custom="true" embed="true"/>
+    <framework src="src/ios/OneginiSDKiOS/OneginiSDKiOS.xcframework" custom="true" embed="true"/>
+    <framework src="src/ios/OneginiSDKiOS/OneginiCrypto.xcframework" custom="true" embed="true"/>
 
     <!-- Frameworks -->
     <framework src="libiconv.dylib"/>
