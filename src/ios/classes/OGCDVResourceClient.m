@@ -44,7 +44,7 @@ int const OGCDVFetchResultHeaderLength = 4;
 
         ONGRequestBuilder *requestBuilder = [ONGRequestBuilder builder];
 
-        if (body) {
+        if (body && ![[NSNull null] isEqual:body]) {
             [requestBuilder setBody:[body dataUsingEncoding:NSUTF8StringEncoding]];
             if ([self isContentTypeNotSet:headers]) {
                 headers[@"Content-Type"] = @"text/plain;charset=utf-8";
