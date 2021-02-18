@@ -10,19 +10,24 @@ transaction information is encrypted and no sensitive information is sent throug
 
 ## Enrollment
 
-To enroll for push first you need to obtain the device token from FCM/APNS. You could write this logic by yourself or use a plugin like https://github.com/phonegap/phonegap-plugin-push
-to do that for you. Once you obtain the deviceToken, the Onegini Cordova plugin requires an authenticated or logged in user to enroll for mobile authentication with push. 
+To enroll for push first you need to obtain the device token from FCM/APNS. This has to be done by calling native
+Android/iOS libraries like `com.google.firebase:firebase-messaging`. In case of Cordova you can either create your own
+JavaScript wrapper around your native code or use one of the existing wrappers. You are not limited to any particular
+plugin; in the example below we used the [Cordova Plugin Push v2.0.0](https://github.com/havesource/cordova-plugin-push)
+with additional [Cordova Plugin AndroidX Adapter](https://github.com/dpa99c/cordova-plugin-androidx-adapter) to make it
+work with AndroidX.
+
+Once you obtain the deviceToken, the Onegini Cordova plugin requires an authenticated or logged in user to enroll for mobile authentication with push.
 The user can be enrolled on only one application instance at a time. If the user has multiple mobile devices on which the application is installed, the user
 can only enroll for mobile authentication with push on one of these devices. Enrollment is done by calling `onegini.mobileAuth.push.enroll()` function.
 
-You also need to implement handling of the notification event received by the system. After receiving the notification, you should verify if it can be handled by Onegini Cordova Plugin. 
+You also need to implement handling of the notification event received by the system. After receiving the notification, you should verify if it can be handled by Onegini Cordova Plugin.
 You can do it by calling `onegini.mobileAuth.push.canHandlePushMessage()` function. If the function returns `true` you can pass it the plugin by calling `onegini.mobileAuth.push.handlePushMessage()` function. Both methods expect you to pass a JSON object as the argument.
 
 **Example code to enroll an authenticated user for mobile authentication with push using PhonegapPluginPush:**
 
 ```js
-const push = PushNotification.init({android: {},
-                                        ios: {alert: "true", badge: "true", sound: "true"}});
+const push = PushNotification.init({android: {}, ios: {alert: "true", badge: "true", sound: "true"}});
 push.on('registration', (data) => {
   onegini.mobileAuth.push.enroll(data)
     .then(() => {
@@ -33,7 +38,7 @@ push.on('registration', (data) => {
     });
 });
 push.on('notification', (data) => {
-  if (onegini.mobileAuth.push.canHandlePushMessage(data.additionalData)) { 
+  if (onegini.mobileAuth.push.canHandlePushMessage(data.additionalData)) {
     onegini.mobileAuth.push.handlePushMessage(data.additionalData)
       .catch((err) => alert('Push message error: ' + err.description));
   } else {
