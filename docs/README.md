@@ -8,6 +8,13 @@ Update your npm frequently with
 ```
 npm install -g npm@latest
 ```
+In case the latest version does not work you can try to use the following versions of the tools
+
+```
+node -v 6.11.0
+npm -v 4.4.4
+python 2.7.17
+```
 
 Run the following command in the `docs` folder to install or update Gitbook and its plugins.
 
