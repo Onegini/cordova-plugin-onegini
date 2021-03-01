@@ -111,3 +111,6 @@ onegini.start({
 
 * Currently, only user authenticated requests (`onegini.resource.auth.USER`) are supported using XHR intercepts.
 * `xhr.responseType = 'arrayBuffer'` is only supported on Android 4.4 and up. The underlying `XMLHttpRequest` implementation on older Android devices does not support this method.
+* Properties `responseURL`, `responseXML`, `timeout`, `upload`, `XMLHttpRequestUpload`, `withCredentials` are not supported.
+* Events `abort`, `loadend`, `loadstart`, `progress`, `timeout` are not supported.
+* Methods `abort`, `overrideMimeType` are not supported.
