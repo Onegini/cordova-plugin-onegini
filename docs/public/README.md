@@ -1,7 +1,6 @@
 # Onegini Cordova Plugin
 
 <div style="text-align:center; margin:40px" class="image logo">
-    <img height="125" src="images/logo.png" alt=""/>
     <img height="125" src="images/cordova-logo.png" alt=""/>
 </div>
 
