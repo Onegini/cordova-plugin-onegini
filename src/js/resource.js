@@ -216,8 +216,8 @@ module.exports = (function (XMLHttpRequest, TextDecoder, CustomEvent) {
   OneginiXMLHttpRequest.prototype.dispatchEvent = function (event) {
     const listeners = this._eventListeners[event.type];
 
-    if (this[event.type]) {
-      this[event.type].call(this, event);
+    if (this['on' + event.type]) {
+      this['on' + event.type].call(this);
     }
 
     if (listeners && listeners.length !== 0) {
@@ -273,14 +273,14 @@ module.exports = (function (XMLHttpRequest, TextDecoder, CustomEvent) {
         body: body
       }, function (successResponse) {
         populateXhrWithFetchResponse(xhr, successResponse);
-        xhr.dispatchEvent(new CustomEvent('onload'));
+        xhr.dispatchEvent(new CustomEvent('load'));
       }, function (err) {
         if (err.httpResponse) {
           populateXhrWithFetchResponse(xhr, err.httpResponse);
-          xhr.dispatchEvent(new CustomEvent('onload'));
+          xhr.dispatchEvent(new CustomEvent('load'));
         } else {
           populateXhrWithFetchResponse(xhr, err);
-          xhr.dispatchEvent(new CustomEvent('onerror', {detail: err}));
+          xhr.dispatchEvent(new CustomEvent('error', {detail: err}));
         }
       });
     });
