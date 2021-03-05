@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-onegini",
-  "version": "8.0.0",
+  "version": "8.0.1-SNAPSHOT",
   "description": "Onegini Cordova Plugin",
   "cordova": {
     "id": "cordova-plugin-onegini",
