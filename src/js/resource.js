@@ -280,7 +280,7 @@ module.exports = (function (XMLHttpRequest, TextDecoder, CustomEvent) {
           xhr.dispatchEvent(new CustomEvent('load'));
         } else {
           populateXhrWithFetchResponse(xhr, err);
-          xhr.dispatchEvent(new CustomEvent('error', {detail: err}));
+          xhr.dispatchEvent(new CustomEvent('error', { detail: err  }));
         }
       });
     });
